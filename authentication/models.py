@@ -26,10 +26,15 @@ class UserManager(BaseUserManager):
         user = self.create_user(
             username=username, email=email, mobile=mobile, password=password)
         user.is_staff = True
-        user.superuser = True
+        user.is_superuser = True
+        user.is_verified = True
         user.is_admin = True
         user.save()
         return user
+
+
+AUTH_PROVIDERS = {'facebook': 'facebook', 'google': 'google',
+                  'twitter': 'twitter', 'email': 'email'}
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -40,8 +45,13 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    auth_provider = models.CharField(
+        max_length=255, blank=False,
+        null=False, default=AUTH_PROVIDERS.get('email'))
 
     objects = UserManager()
     USERNAME_FIELD = 'email'
@@ -50,7 +60,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.username
 
-    def tokens(self):
+    def get_tokens(self):
         refresh = RefreshToken.for_user(self)
         return {
             'refresh': str(refresh),

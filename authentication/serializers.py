@@ -42,14 +42,27 @@ class EmailVerificationSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.ModelSerializer):
     tokens = serializers.CharField(max_length=555, read_only=True)
+    tokens = serializers.SerializerMethodField()
     password = serializers.CharField(min_length=8, write_only=True)
     email = serializers.CharField(max_length=80)
     username = serializers.CharField(max_length=50, read_only=True)
 
+    def get_tokens(self, obj):
+        user = User.objects.get(email=obj['email'])
+        return {
+            'access': user.get_tokens()['access'], 'refresh': user.get_tokens()['refresh']
+        }
+
     def validate(self, attrs):
         email = attrs['email']
         password = attrs.get('password', '')
+        filtered_user_by_email = User.objects.filter(email=email)
         user = authenticate(email=email, password=password)
+
+        if filtered_user_by_email.exists() and filtered_user_by_email[0].auth_provider != 'email':
+            raise AuthenticationFailed(
+                detail='Please continue your login using ' + filtered_user_by_email[0].auth_provider)
+
         if not user:
             raise AuthenticationFailed(
                 'bad credintials login failed')
@@ -61,7 +74,7 @@ class LoginSerializer(serializers.ModelSerializer):
         return {
             'email': user.email,
             'username': user.username,
-            'tokens': user.tokens()
+            'tokens': user.get_tokens()
         }
 
     class Meta():
@@ -100,4 +113,3 @@ class SetNewPasswordSerializer(serializers.ModelSerializer):
             return (user)
         except Exception as e:
             raise AuthenticationFailed('The reset link is invalid', 401)
-        return super().validate(attrs)
