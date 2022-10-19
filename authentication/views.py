@@ -1,7 +1,7 @@
 from rest_framework import generics, status, views
 from rest_framework.response import Response
 from rest_framework.request import Request
-from .serializers import RegisterSerializer, EmailVerificationSerializer, LoginSerializer, ResetPasswordRequestSerializer, SetNewPasswordSerializer
+from .serializers import RegisterSerializer, EmailVerificationSerializer, LoginSerializer, ResetPasswordRequestSerializer, SetNewPasswordSerializer, LogoutSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
@@ -16,6 +16,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import smart_str, smart_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
+
 # Create your views here.
 
 
@@ -132,3 +133,14 @@ class SetNewpasswordAPIView(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'success': True, 'message': 'Password reset success'}, status=status.HTTP_200_OK)
+
+
+class LogoutAPIView(generics.GenericAPIView):
+    serializer_class = LogoutSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def post(self, request: Request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)

@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=2),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 AUTH_USER_MODEL = 'authentication.User'
@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'expenses',
     'incomes',
     'corsheaders',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 SWAGGER_SETTINGS = {
