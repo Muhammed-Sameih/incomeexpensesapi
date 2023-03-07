@@ -98,6 +98,24 @@ class LogoutSerializer(serializers.Serializer):
             self.fail('bad_token')
 
 
+class RequestVerifyEmailSerializer(serializers.Serializer):
+
+    redirect_url = serializers.CharField(max_length=500, required=False)
+
+    class Meta:
+        fields = ['redirect_url']
+
+
+class EmailVerificationSerializer(serializers.ModelSerializer):
+    """Verification email serializer class"""
+    token = serializers.CharField(max_length=555)
+    redirect_url = serializers.CharField(max_length=555)
+
+    class Meta:
+        model = User
+        fields = ['token']
+
+
 class ResetPasswordRequestSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=80)
 
