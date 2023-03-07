@@ -9,36 +9,32 @@ from django.utils.http import urlsafe_base64_decode
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(min_length=8, write_only=True)
+    """Serializer class for registeration by email, username, mobile & password"""
+    email = serializers.EmailField(min_length=10, max_length=255)
+    password = serializers.CharField(
+        min_length=8, max_length=80, write_only=True)
+    username = serializers.CharField(max_length=50, min_length=3)
+    mobile = serializers.CharField(max_length=11, min_length=11)
 
-    class Meta():
+    class Meta:
         model = User
-        fields = ['email', 'username', 'password', 'mobile']
+        fields = ['username', 'mobile', 'email', 'password']
 
     def validate(self, attrs):
-        email = User.objects.filter(email=attrs['email']).exists()
-        username = attrs.get('username', '')
-
-        if not username.isalnum():
+        "Validation method check if email used before & is mobile consist of nums only"
+        email = attrs.get('email', '')
+        mobile = attrs.get('mobile', '')
+        if User.objects.filter(email=email).exists():
             raise serializers.ValidationError(
-                'user name must has alphanumaric characters')
-
-        if email:
+                {'email': 'Email is already exist'})
+        if not (mobile.isnumeric()):
             raise serializers.ValidationError(
-                'email already exists')
+                {'mobile': 'Mobile must consist of only numbers'})
 
-        return attrs
+        return super().validate(attrs)
 
-    def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
-
-
-class EmailVerificationSerializer(serializers.ModelSerializer):
-    token = serializers.CharField(max_length=555)
-
-    class Meta():
-        model = User
-        fields = ['token']
+    def create(self, validate_data):
+        return User.objects.create_user(**validate_data)
 
 
 class LoginSerializer(serializers.ModelSerializer):
