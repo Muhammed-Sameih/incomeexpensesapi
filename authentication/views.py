@@ -23,19 +23,40 @@ from .serializers import (
     ResetPasswordEmailRequestSerializer
 )
 
-# Create your views here.
-
 
 class RegisterAPIView(generics.GenericAPIView):
+    """API View for registration"""
     serializer_class = RegisterSerializer
-    renderer_classes = [UserRenderer, ]
 
-    def post(self, request: Request):
-        user = request.data
-        serializer = self.serializer_class(data=user)
+    def post(self, request: Request) -> Response:
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class LoginAPIView(generics.GenericAPIView):
+    """API View for login"""
+    serializer_class = LoginSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request: Request) -> Response:
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+class LogoutAPIView(generics.GenericAPIView):
+    """API View for logout"""
+    serializer_class = LogoutSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def post(self, request: Request) -> Response:
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class EmailVerificationAPIView(views.APIView):
@@ -62,17 +83,6 @@ class EmailVerificationAPIView(views.APIView):
             return Response({'error': 'Activation link expired'}, status=status.HTTP_400_BAD_REQUEST)
         except jwt.exceptions.DecodeError:
             return Response({'error': 'Invalid Token'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class LoginAPIView(generics.GenericAPIView):
-    """API View for login"""
-    serializer_class = LoginSerializer
-    permission_classes = [AllowAny]
-
-    def post(self, request: Request) -> Response:
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
 class VerificationEmailRequestAPIView(views.APIView):
@@ -140,14 +150,3 @@ class SetNewpasswordAPIView(generics.GenericAPIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'success': True, 'message': 'Password reset success'}, status=status.HTTP_200_OK)
-
-
-class LogoutAPIView(generics.GenericAPIView):
-    serializer_class = LogoutSerializer
-    permission_classes = [IsAuthenticated, ]
-
-    def post(self, request: Request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
