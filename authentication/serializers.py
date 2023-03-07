@@ -42,27 +42,25 @@ class EmailVerificationSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.ModelSerializer):
+    """Serializer class for login by email & password"""
     tokens = serializers.CharField(max_length=555, read_only=True)
     tokens = serializers.SerializerMethodField()
     password = serializers.CharField(min_length=8, write_only=True)
-    email = serializers.CharField(max_length=80)
+    email = serializers.CharField(max_length=255)
     username = serializers.CharField(max_length=50, read_only=True)
 
     def get_tokens(self, obj):
+        """Method to get tokens for user by using get_tokens method in User class by get user obj by email from data base."""
         user = User.objects.get(email=obj['email'])
         return {
             'access': user.get_tokens()['access'], 'refresh': user.get_tokens()['refresh']
         }
 
     def validate(self, attrs):
+        "Validation method check if user exist by authenticate function & check if user account is active by user is_active attribute then return user email, username & tokens"
         email = attrs['email']
         password = attrs.get('password', '')
-        filtered_user_by_email = User.objects.filter(email=email)
         user = authenticate(email=email, password=password)
-
-        if filtered_user_by_email.exists() and filtered_user_by_email[0].auth_provider != 'email':
-            raise AuthenticationFailed(
-                detail='Please continue your login using ' + filtered_user_by_email[0].auth_provider)
 
         if not user:
             raise AuthenticationFailed(
@@ -80,7 +78,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta():
         model = User
-        fields = ['tokens', 'email', 'username', 'password']
+        fields = ['email', 'username', 'password', 'tokens']
 
 
 class ResetPasswordRequestSerializer(serializers.ModelSerializer):
