@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 from datetime import timedelta
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,11 +38,10 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
-DEFAULT_FROM_EMAIL = 'musm55648@gmail.com'
-SERVER_EMAIL = 'musm55648@gmail.com'
-EMAIL_HOST_USER = 'musm55648@gmail.com'  # os.environ.get('EMAIL_HOST_USE')
-# os.environ.get('EMAIL_HOST_PASSWORD')
-EMAIL_HOST_PASSWORD = 'zscheotbeeeuyrbs'
+DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USE')
+SERVER_EMAIL = os.environ.get('EMAIL_HOST_USE')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USE')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
