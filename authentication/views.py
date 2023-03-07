@@ -1,21 +1,27 @@
 from rest_framework import generics, status, views
 from rest_framework.response import Response
-from rest_framework.request import Request
-from .serializers import RegisterSerializer, EmailVerificationSerializer, LoginSerializer, ResetPasswordRequestSerializer, SetNewPasswordSerializer, LogoutSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.contrib.auth import get_user_model
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.sites.shortcuts import get_current_site
-from django.conf import settings
-from .utils import Util
+from rest_framework.request import Request
 from django.urls import reverse
 import jwt
-from drf_yasg.utils import swagger_auto_schema
-from .renderers import UserRenderer
-from drf_yasg import openapi
+from django.conf import settings
+import os
+from .models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import smart_str, smart_bytes, DjangoUnicodeDecodeError
+from django.utils.encoding import smart_str, force_str, smart_bytes, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.contrib.sites.shortcuts import get_current_site
+from .utils import Util, CustomRedirect
+from .serializers import (
+    RegisterSerializer,
+    LoginSerializer,
+    LogoutSerializer,
+    RequestVerifyEmailSerializer,
+    EmailVerificationSerializer,
+    SetNewPasswordSerializer,
+    ResetPasswordEmailRequestSerializer
+)
 
 # Create your views here.
 
@@ -59,10 +65,11 @@ class EmailVerificationAPIView(views.APIView):
 
 
 class LoginAPIView(generics.GenericAPIView):
+    """API View for login"""
     serializer_class = LoginSerializer
     permission_classes = [AllowAny]
 
-    def post(self, request):
+    def post(self, request: Request) -> Response:
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
