@@ -77,6 +77,27 @@ class LoginSerializer(serializers.ModelSerializer):
         fields = ['email', 'username', 'password', 'tokens']
 
 
+class LogoutSerializer(serializers.Serializer):
+    """Logout serializer class with refresh token, log out by blacklisting this token"""
+    refresh = serializers.CharField()
+
+    default_error_messages = {
+        'bad_token': ('Token is expired or invalid')
+    }
+
+    def validate(self, attrs):
+        self.token = attrs['refresh']
+        return attrs
+
+    def save(self, **kwargs):
+
+        try:
+            RefreshToken(self.token).blacklist()
+
+        except TokenError:
+            self.fail('bad_token')
+
+
 class ResetPasswordRequestSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=80)
 
@@ -108,23 +129,3 @@ class SetNewPasswordSerializer(serializers.ModelSerializer):
             return (user)
         except DjangoUnicodeDecodeError:
             raise AuthenticationFailed('The reset link is invalid', 401)
-
-
-class LogoutSerializer(serializers.Serializer):
-    refresh = serializers.CharField()
-
-    default_error_messages = {
-        'bad_token': ('Token is expired or invalid')
-    }
-
-    def validate(self, attrs):
-        self.token = attrs['refresh']
-        return attrs
-
-    def save(self, **kwargs):
-
-        try:
-            RefreshToken(self.token).blacklist()
-
-        except TokenError:
-            self.fail('bad_token')
