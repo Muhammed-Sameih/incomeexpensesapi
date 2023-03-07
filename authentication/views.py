@@ -59,48 +59,61 @@ class LogoutAPIView(generics.GenericAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class EmailVerificationAPIView(views.APIView):
-    serializer_class = EmailVerificationSerializer
-
-    token_pram_conf = openapi.Parameter(
-        'token', in_=openapi.IN_QUERY, description='description', type=openapi.TYPE_STRING)
-
-    @swagger_auto_schema(manual_parameters=[token_pram_conf])
-    def get(self, request: Request):
-        token = request.GET.get('token')
-        try:
-            payload = jwt.decode(
-                token, settings.SECRET_KEY, algorithms=['HS256'])
-            User = get_user_model()
-            user = User.objects.get(id=payload['user_id'])
-            if not user.is_verified:
-                user.is_verified = True
-                user.save()
-                return Response({'message': 'verified successfully'}, status=status.HTTP_201_CREATED)
-            else:
-                return Response({'message': 'Account already verified'}, status=status.HTTP_200_OK)
-        except jwt.ExpiredSignatureError:
-            return Response({'error': 'Activation link expired'}, status=status.HTTP_400_BAD_REQUEST)
-        except jwt.exceptions.DecodeError:
-            return Response({'error': 'Invalid Token'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class VerificationEmailRequestAPIView(views.APIView):
+class RequestEmailVerificationAPIView(generics.GenericAPIView):
+    """API View for request verification email"""
+    serializer_class = RequestVerifyEmailSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request: Request):
+    def post(self, request: Request):
+        serializer = self.serializer_class(data=request.data)
         user = request.user
-        token = user.tokens()['access']
-        relativeLink = reverse('emailverification')
-        abs_url = f'http://{get_current_site(request).domain}{relativeLink}?token={str(token)}'
-        email_body = f'Hi {user.username} use link below to verify \n{abs_url} \n\n\nNote: Your account will work 30 days without verification after that must be verified.'
+        token = user.get_tokens()['access']
+        relativeLink = reverse('email-verify')
+        redirect_url = request.data.get('redirect_url', '')
+        abs_url = f'http://{get_current_site(request).domain}{relativeLink}?token={str(token)}&redirect_url={str(redirect_url)}'
+        email_body = f'Hi {user.username} use link below to verify \n{abs_url}\nNote: Your account will work 30 days without verification after that must be verified.'
         data = {
-            'email_to': user.email,
+            'to_email': user.email,
             'email_body': email_body,
             'email_subject': 'Account Verification'
         }
         Util.send_email(data)
         return Response({'message': 'verification email sent successfully'}, status=status.HTTP_201_CREATED)
+
+
+class VerifyEmailAPIView(views.APIView):
+    """API View for verify account"""
+    serializer_class = EmailVerificationSerializer
+
+    def get(self, request: Request):
+
+        token = str(request.GET.get('token'))
+        redirect_url = request.GET.get('redirect_url', '')
+        try:
+            payload = jwt.decode(
+                jwt=token, key=settings.SECRET_KEY, algorithms=['HS256'])
+            user = User.objects.get(id=payload['user_id'])
+
+            if not user.is_verified:
+                user.is_verified = True
+                user.save()
+
+            if redirect_url and len(redirect_url) > 3:
+                return CustomRedirect(f'{redirect_url}?token_valid=True&message=Email verified&token={token}')
+            else:
+                return CustomRedirect(f"{os.environ.get('FRONTEND_URL', '')}?token_valid=True")
+
+        except jwt.ExpiredSignatureError:
+            if redirect_url and len(redirect_url) > 3:
+                return CustomRedirect(f'{redirect_url}?token_valid=False&message=token expired')
+            else:
+                return CustomRedirect(f"{os.environ.get('FRONTEND_URL', '')}?token_valid=False&message=token expired")
+
+        except jwt.exceptions.DecodeError:
+            if redirect_url and len(redirect_url) > 3:
+                return CustomRedirect(f'{redirect_url}?token_valid=False&message=token expired')
+            else:
+                return CustomRedirect(f"{os.environ.get('FRONTEND_URL', '')}?token_valid=False&message=invalid token")
 
 
 class ResetPasswordRequestEmailAPIView(generics.GenericAPIView):
