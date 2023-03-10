@@ -24,4 +24,4 @@ class ExpenseDetailAPIView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         print(type(self.request.user))
-        return self.queryset.filter(owner=self.request.user)
+        return self.queryset.filter(owner=self.request.user.id)

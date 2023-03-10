@@ -16,7 +16,7 @@ class IncomesListAPIView(generics.ListCreateAPIView):
         return serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
+        return self.queryset.filter(owner=self.request.user.id)
 
 
 class IncomeDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
