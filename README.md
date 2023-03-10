@@ -5,10 +5,8 @@
 
 - [Description](#description)
 - [Features ✨](#features-)
-- [Screenshots 🖵](#screenshots-)
 - [Project structure](#project-structure)
 - [Installation 📥](#installation-)
-- [How to use](#how-to-use)
 - [Tech/Framework used 🧰](#techframework-used-)
 - [Deployment/Live Demo](#deploymentlive-demo)
 </details>
