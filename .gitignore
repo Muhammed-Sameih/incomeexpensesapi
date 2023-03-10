@@ -1,5 +1,5 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+*__pycache__/
 *.py[cod]
 *$py.class
 
@@ -47,7 +47,7 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *.cover
-**.pyc
+*.pyc
 .hypothesis/
 .pytest_cache/
 
