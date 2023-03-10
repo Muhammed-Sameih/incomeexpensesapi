@@ -128,6 +128,8 @@ Welcome to our expenses and incomes management project! This project is designed
 
 </details>
 
+## Installation 📥
+
 #### Clone Project
 
 ```bash
