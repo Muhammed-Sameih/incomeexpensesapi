@@ -2,7 +2,7 @@ from rest_framework import generics
 
 from incomes.models import Income
 from .serializers import IncomeSerializer
-from .permissions import IsOwner, IsVerified
+from expenses.permissions import IsOwner, IsVerified
 from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 
