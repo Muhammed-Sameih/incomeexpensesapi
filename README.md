@@ -171,13 +171,14 @@ code .
 
 ## Tech/Framework used 🧰
 
-- [Node.js](https://nodejs.org/en/)
-- [Express](https://expressjs.com/)
+- [Django framework](https://www.djangoproject.com/)
+- [Django REST Framework](https://www.django-rest-framework.org/)
 - [Git](https://git-scm.com/)
-- [Socket.io](https://socket.io/)
-- [mustache.js](https://github.com/janl/mustache.js)
-- [moment.min.js](https://momentjs.com/)
-- [qs](https://cdnjs.com/libraries/qs)
+- [Django REST Swagger](https://django-rest-swagger.readthedocs.io/en/latest/#django-rest-swagger)
+- [Simple JWT](https://django-rest-framework-simplejwt.readthedocs.io/en/latest/)
+- [Facebook Business SDK for Python](https://github.com/facebook/facebook-python-business-sdk)
+- [python-twitter’s](https://python-twitter.readthedocs.io/en/latest/)
+- [Google API Client](https://github.com/googleapis/google-api-python-client)
 - [VSCode](https://code.visualstudio.com/)
 
 ## Deployment/Live Demo
