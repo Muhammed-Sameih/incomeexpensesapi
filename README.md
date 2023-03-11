@@ -55,70 +55,95 @@ Welcome to our expenses and incomes management project! This project is designed
 ```bash
 ## Project Structure
 
-├── authentication
-│   ├── admin.py
-│   ├── apps.py
-│   ├── __init__.py
-│   ├── models.py
-│   ├── renderers.py
-│   ├── serializers.py
-│   ├── tests
-│   │   ├── __init__.py
-│   │   ├── test_model.py
-│   │   ├── test_setup.py
-│   │   └── test_views.py
-│   ├── tests.py
-│   ├── urls.py
-│   ├── utils.py
-│   └── views.py
-├── expenses
-│   ├── admin.py
-│   ├── apps.py
-│   ├── __init__.py
-│   ├── models.py
-│   ├── permissions.py
-│   ├── serializers.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-├── incomeexpensesapis
-│   ├── asgi.py
-│   ├── __init__.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-├── incomes
-│   ├── admin.py
-│   ├── apps.py
-│   ├── __init__.py
-│   ├── models.py
-│   ├── serializers.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-├── manage.py
-├── requirements.txt
-├── social_auth
-│   ├── admin.py
-│   ├── apps.py
-│   ├── facebook.py
-│   ├── google.py
-│   ├── __init__.py
-│   ├── models.py
-│   ├── register.py
-│   ├── serializers.py
-│   ├── tests.py
-│   ├── twitterhelper.py
-│   ├── urls.py
-│   └── views.py
-└── userstats
-    ├── admin.py
-    ├── apps.py
-    ├── __init__.py
-    ├── models.py
-    ├── tests.py
-    ├── urls.py
-    └── views.py
+
+  incomeexpensesapi
+    ├── authentication
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── __init__.py
+    │   ├── migrations
+    │   │   ├── 0001_initial.py
+    │   │   ├── 0002_user_is_admin.py
+    │   │   ├── 0003_alter_user_is_superuser.py
+    │   │   ├── 0004_user_auth_provider.py
+    │   │   ├── 0005_remove_user_auth_provider_alter_user_email_and_more.py
+    │   │   └── __init__.py
+    │   ├── models.py
+    │   ├── renderers.py
+    │   ├── serializers.py
+    │   ├── tests
+    │   │   ├── __init__.py
+    │   │   ├── test_model.py
+    │   │   ├── test_setup.py
+    │   │   └── test_views.py
+    │   ├── tests.py
+    │   ├── urls.py
+    │   ├── utils.py
+    │   └── views.py
+    ├── build_env.sh
+    ├── expenses
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── __init__.py
+    │   ├── migrations
+    │   │   ├── 0001_initial.py
+    │   │   ├── 0002_alter_expense_options.py
+    │   │   ├── 0003_expense_created_at_expense_updated_at.py
+    │   │   ├── 0004_alter_expense_options.py
+    │   │   └── __init__.py
+    │   ├── models.py
+    │   ├── permissions.py
+    │   ├── serializers.py
+    │   ├── tests.py
+    │   ├── urls.py
+    │   └── views.py
+    ├── incomeexpensesapis
+    │   ├── asgi.py
+    │   ├── __init__.py
+    │   ├── settings.py
+    │   ├── urls.py
+    │   └── wsgi.py
+    ├── incomes
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── __init__.py
+    │   ├── migrations
+    │   │   ├── 0001_initial.py
+    │   │   ├── 0002_alter_income_options_income_created_at_and_more.py
+    │   │   └── __init__.py
+    │   ├── models.py
+    │   ├── serializers.py
+    │   ├── tests.py
+    │   ├── urls.py
+    │   └── views.py
+    ├── manage.py
+    ├── README.md
+    ├── requirements.txt
+    ├── social_auth
+    │   ├── admin.py
+    │   ├── apps.py
+    │   ├── facebook.py
+    │   ├── google.py
+    │   ├── __init__.py
+    │   ├── migrations
+    │   │   └── __init__.py
+    │   ├── models.py
+    │   ├── register.py
+    │   ├── serializers.py
+    │   ├── tests.py
+    │   ├── twitterhelper.py
+    │   ├── urls.py
+    │   └── views.py
+    └── userstats
+        ├── admin.py
+        ├── apps.py
+        ├── __init__.py
+        ├── migrations
+        │   └── __init__.py
+        ├── models.py
+        ├── tests.py
+        ├── urls.py
+        └── views.py
 
 
 
